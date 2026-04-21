@@ -1,0 +1,35 @@
+{
+  "categories": [
+    {
+      "name": "Math",
+      "questions": [
+        {
+          "text": "What is 2 + 2?",
+          "options": ["3", "4", "5"],
+          "correct": [1],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which of these are prime numbers?",
+          "options": ["2", "3", "4", "5"],
+          "correct": [0, 1, 3],
+          "type": "multi",
+          "image": "img/math_primes.png"
+        }
+      ]
+    },
+    {
+      "name": "Science",
+      "questions": [
+        {
+          "text": "What is the chemical symbol for water?",
+          "options": ["H2O", "CO2", "O2"],
+          "correct": [0],
+          "type": "single",
+          "image": null
+        }
+      ]
+    }
+  ]
+}
