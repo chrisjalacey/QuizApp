@@ -98,6 +98,7 @@ def quiz():
 def submit_quiz():
     questions = session.get('questions', [])
     answers = {}
+    review_data = []
     score = 0
     total = len(questions)
     
@@ -107,8 +108,29 @@ def submit_quiz():
         user_ans = [int(x) for x in user_ans]
         answers[i] = user_ans
         correct = q['correct']
-        if set(user_ans) == set(correct):
+        is_correct = set(user_ans) == set(correct)
+        
+        if is_correct:
             score += 1
+        
+        # Build review data for this question
+        user_labels = [q['options'][idx] for idx in user_ans]
+        correct_labels = [q['options'][idx] for idx in correct]
+        
+        review_item = {
+            'question_index': i,
+            'question_text': q['text'],
+            'question_type': q['type'],
+            'options': q['options'],
+            'correct_indices': correct,
+            'correct_labels': correct_labels,
+            'correct_count': len(correct),
+            'user_answers': user_ans,
+            'user_labels': user_labels,
+            'is_correct': is_correct,
+            'image': q.get('image')
+        }
+        review_data.append(review_item)
     
     percentage = (score / total) * 100 if total > 0 else 0
     
@@ -131,6 +153,8 @@ def submit_quiz():
     session['total'] = total
     session['percentage'] = percentage
     session['answers'] = answers
+    session['review_data'] = review_data
+    session['quiz_name'] = session.get('quiz_name', 'Unknown')
     
     return redirect(url_for('results'))
 
@@ -139,7 +163,9 @@ def results():
     score = session.get('score', 0)
     total = session.get('total', 0)
     percentage = session.get('percentage', 0)
-    return render_template('results.html', score=score, total=total, percentage=percentage)
+    review_data = session.get('review_data', [])
+    quiz_name = session.get('quiz_name', 'Unknown')
+    return render_template('results.html', score=score, total=total, percentage=percentage, review_data=review_data, quiz_name=quiz_name)
 
 if __name__ == '__main__':
     app.run(debug=True)

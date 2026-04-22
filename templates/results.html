@@ -5,14 +5,123 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .question-item {
+            border-left: 4px solid #ccc;
+            padding-left: 15px;
+            margin-bottom: 15px;
+        }
+        .question-item.correct {
+            border-left-color: #28a745;
+        }
+        .question-item.incorrect {
+            border-left-color: #dc3545;
+        }
+        .badge-section {
+            margin-bottom: 10px;
+        }
+        .answer-section {
+            background-color: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .correct-badge {
+            background-color: #28a745;
+        }
+        .incorrect-badge {
+            background-color: #dc3545;
+        }
+    </style>
 </head>
 <body>
     <div class="container mt-5">
-        <h1>Quiz Results</h1>
-        <div class="alert alert-success">
-            <h4>Score: {{ score }} / {{ total }} ({{ "%.2f"|format(percentage) }}%)</h4>
+        <h1 class="mb-4">Quiz Results</h1>
+        
+        <!-- Score Summary -->
+        <div class="alert alert-info mb-4">
+            <h4 class="mb-0">{{ quiz_name }}</h4>
+            <p class="mb-0">Score: <strong>{{ score }} / {{ total }} ({{ "%.2f"|format(percentage) }}%)</strong></p>
         </div>
-        <a href="{{ url_for('home') }}" class="btn btn-primary">Take Another Quiz</a>
+        
+        <!-- Score Bar -->
+        <div class="progress mb-4" style="height: 25px;">
+            <div class="progress-bar" role="progressbar" style="width: {{ percentage }}%;" aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">
+                {{ "%.1f"|format(percentage) }}%
+            </div>
+        </div>
+        
+        <!-- Question Review -->
+        <h3 class="mb-3">Review Your Answers</h3>
+        <div class="accordion" id="questionAccordion">
+            {% for item in review_data %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button {% if not item.is_correct %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#question{{ loop.index0 }}">
+                        <span class="badge {% if item.is_correct %}bg-success{% else %}bg-danger{% endif %} me-2">
+                            {% if item.is_correct %}✓{% else %}✗{% endif %}
+                        </span>
+                        <strong>Question {{ loop.index }}</strong>: {{ item.question_text[:60] }}{% if item.question_text|length > 60 %}...{% endif %}
+                    </button>
+                </h2>
+                <div id="question{{ loop.index0 }}" class="accordion-collapse collapse {% if item.is_correct %}show{% endif %}" data-bs-parent="#questionAccordion">
+                    <div class="accordion-body">
+                        <div class="question-item {% if item.is_correct %}correct{% else %}incorrect{% endif %}">
+                            <!-- Question Text -->
+                            <p><strong>Question:</strong></p>
+                            <p>{{ item.question_text }}</p>
+                            
+                            {% if item.image %}
+                            <img src="/img/{{ item.image }}" alt="Question image" class="img-fluid mb-3" style="max-width: 300px;">
+                            {% endif %}
+                            
+                            <!-- Question Type Hint -->
+                            {% if item.question_type == 'multi' %}
+                            <p class="text-muted small mb-2">(Multi-choice: {{ item.correct_count }} correct answer{{ 's' if item.correct_count != 1 else '' }})</p>
+                            {% endif %}
+                            
+                            <!-- Your Answer(s) -->
+                            <div class="answer-section mb-3">
+                                <p><strong>Your Answer{{ 's' if item.user_answers|length != 1 else '' }}:</strong></p>
+                                {% if item.user_answers|length == 0 %}
+                                <p class="text-muted"><em>No answer selected</em></p>
+                                {% else %}
+                                <ul class="mb-0">
+                                    {% for label in item.user_labels %}
+                                    <li>{{ label }}</li>
+                                    {% endfor %}
+                                </ul>
+                                {% endif %}
+                            </div>
+                            
+                            <!-- Correct Answer(s) -->
+                            <div class="answer-section">
+                                <p><strong>Correct Answer{{ 's' if item.correct_count != 1 else '' }}:</strong></p>
+                                <ul class="mb-0">
+                                    {% for label in item.correct_labels %}
+                                    <li>{{ label }}</li>
+                                    {% endfor %}
+                                </ul>
+                            </div>
+                            
+                            <!-- Result Badge -->
+                            <p class="mt-3">
+                                {% if item.is_correct %}
+                                <span class="badge bg-success">Correct!</span>
+                                {% else %}
+                                <span class="badge bg-danger">Incorrect</span>
+                                {% endif %}
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="mt-4">
+            <a href="{{ url_for('home') }}" class="btn btn-primary">Take Another Quiz</a>
+        </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
