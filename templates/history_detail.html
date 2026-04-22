@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attempt Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="mb-4">Quiz Attempt Details</h1>
+        
+        <!-- Score Summary -->
+        <div class="alert alert-info mb-4">
+            <h4 class="mb-2">{{ quiz_name }}</h4>
+            <p class="mb-1">Date: <strong>{{ date[:19] }}</strong></p>
+            <p class="mb-0">Score: <strong>{{ score }} / {{ total }} ({{ "%.2f"|format(percentage) }}%)</strong></p>
+        </div>
+        
+        <!-- Score Bar -->
+        <div class="progress mb-4" style="height: 25px;">
+            <div class="progress-bar" role="progressbar" style="width: {{ percentage }}%;" aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">
+                {{ "%.1f"|format(percentage) }}%
+            </div>
+        </div>
+        
+        <!-- Question Review (if available) -->
+        {% if review_data %}
+        <h3 class="mb-3">Review Your Answers</h3>
+        <div class="accordion" id="questionAccordion">
+            {% for item in review_data %}
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button {% if not item.is_correct %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#question{{ loop.index0 }}">
+                        <span class="badge {% if item.is_correct %}bg-success{% else %}bg-danger{% endif %} me-2">
+                            {% if item.is_correct %}✓{% else %}✗{% endif %}
+                        </span>
+                        <strong>Question {{ loop.index }}</strong>
+                    </button>
+                </h2>
+                <div id="question{{ loop.index0 }}" class="accordion-collapse collapse {% if item.is_correct %}show{% endif %}" data-bs-parent="#questionAccordion">
+                    <div class="accordion-body">
+                        <p><strong>Question:</strong> {{ item.question_text }}</p>
+                        <p><strong>Your Answer:</strong> {{ item.user_answer }}</p>
+                        <p><strong>Correct Answer:</strong> {{ item.correct_answer }}</p>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-warning">
+            <p>Detailed question review is not available for this attempt.</p>
+        </div>
+        {% endif %}
+        
+        <div class="mt-4">
+            <a href="{{ url_for('history') }}" class="btn btn-secondary">Back to History</a>
+            <a href="{{ url_for('home') }}" class="btn btn-primary">Home</a>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

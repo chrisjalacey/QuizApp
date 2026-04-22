@@ -167,5 +167,61 @@ def results():
     quiz_name = session.get('quiz_name', 'Unknown')
     return render_template('results.html', score=score, total=total, percentage=percentage, review_data=review_data, quiz_name=quiz_name)
 
+@app.route('/history')
+def history():
+    """Display last 10 quiz attempts."""
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('SELECT id, date, categories, score, total, percentage FROM scores ORDER BY date DESC LIMIT 10')
+    rows = c.fetchall()
+    conn.close()
+    
+    attempts = []
+    for row in rows:
+        attempt_id, date, categories_json, score, total, percentage = row
+        categories = json.loads(categories_json)
+        quiz_name = categories[0] if categories else 'Unknown'
+        attempts.append({
+            'id': attempt_id,
+            'date': date,
+            'quiz_name': quiz_name,
+            'score': score,
+            'total': total,
+            'percentage': percentage
+        })
+    
+    return render_template('history.html', attempts=attempts)
+
+@app.route('/history/<int:attempt_id>')
+def history_detail(attempt_id):
+    """Display detailed review of a specific quiz attempt."""
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('SELECT date, categories, score, total, percentage, answers FROM scores WHERE id = ?', (attempt_id,))
+    row = c.fetchone()
+    conn.close()
+    
+    if not row:
+        return redirect(url_for('history'))
+    
+    date, categories_json, score, total, percentage, answers_json = row
+    categories = json.loads(categories_json)
+    quiz_name = categories[0] if categories else 'Unknown'
+    answers_list = json.loads(answers_json) if answers_json else []
+    
+    # Reconstruct review data from answers
+    # We need to load the quiz file to get questions
+    # For now, we'll display a simple version with just the answers
+    review_data = []
+    
+    return render_template('history_detail.html', 
+                         attempt_id=attempt_id,
+                         date=date,
+                         quiz_name=quiz_name,
+                         score=score,
+                         total=total,
+                         percentage=percentage,
+                         review_data=review_data)
+
 if __name__ == '__main__':
     app.run(debug=True)
