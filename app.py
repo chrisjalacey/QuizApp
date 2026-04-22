@@ -38,6 +38,13 @@ def init_db():
     c = conn.cursor()
     c.execute('''CREATE TABLE IF NOT EXISTS scores
                  (id INTEGER PRIMARY KEY, date TEXT, score INTEGER, total INTEGER, percentage REAL, categories TEXT, question_counts TEXT, timer_used INTEGER)''')
+    
+    # Migration: Add answers column if it doesn't exist
+    c.execute("PRAGMA table_info(scores)")
+    columns = {column[1] for column in c.fetchall()}
+    if 'answers' not in columns:
+        c.execute('ALTER TABLE scores ADD COLUMN answers TEXT')
+    
     conn.commit()
     conn.close()
 
@@ -105,14 +112,18 @@ def submit_quiz():
     
     percentage = (score / total) * 100 if total > 0 else 0
     
+    # Convert answers dict to list format: {0: [1], 1: [0, 2]} -> [[1], [0, 2]]
+    answers_list = [answers.get(i, []) for i in range(total)]
+    
     # Save to db
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute('INSERT INTO scores (date, score, total, percentage, categories, question_counts, timer_used) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    c.execute('INSERT INTO scores (date, score, total, percentage, categories, question_counts, timer_used, answers) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
               (datetime.now().isoformat(), score, total, percentage, 
                json.dumps([session.get('quiz_name', 'Unknown')]), 
                json.dumps({'questions': total}), 
-               int(session.get('timer', 0) or 0)))
+               int(session.get('timer', 0) or 0),
+               json.dumps(answers_list)))
     conn.commit()
     conn.close()
     
