@@ -23,51 +23,140 @@ python app.py
 
 ### File Purposes
 
+**Application:**
 - **app.py** - All Flask routes, session logic, database operations, and initialization
-- **data/quizzes.json** - Quiz questions organized by category (JSON format—see JSON_SCHEMA.md)
-- **data/scores.db** - SQLite database automatically created on first run; stores all quiz scores
-- **templates/index.html** - Home page with category selection form
-- **templates/quiz.html** - Quiz page with dynamic question rendering and timer
-- **templates/results.html** - Results page showing score and percentage
+
+**Quiz Data:**
+- **data/quizzes_registry.json** - Central index of all available quizzes (id, name, file path)
+- **data/{quiz_id}.json** - Individual quiz files (e.g., math.json, science.json, gce.json)
+- **data/scores.db** - SQLite database auto-created on first run; stores quiz scores and individual answers
+
+**Templates:**
+- **templates/index.html** - Home page with quiz selection dropdown
+- **templates/quiz.html** - Quiz page with dynamic question rendering, multi-choice hints, timer
+- **templates/results.html** - Results page with score summary and accordion-style question review
+- **templates/history.html** - History page showing last 10 quiz attempts
+- **templates/history_detail.html** - Detailed view of a historical quiz attempt
+
+**Assets:**
 - **static/** - (Empty) Reserved for CSS/JavaScript assets
-- **img/** - Question images referenced in quizzes.json
+- **img/** - Question images referenced in quiz JSON files
+
+**Configuration & Documentation:**
 - **requirements.txt** - Python dependencies (Flask only)
 - **Dockerfile** - Container configuration for Docker deployment
+- **.gitignore** - Version control exclusions
 - **README.md** - User-facing project overview
 - **ARCHITECTURE.md** - System design and components
 - **IMPLEMENTATION.md** - Implementation details and logic
-- **JSON_SCHEMA.md** - Quiz data format reference
+- **JSON_SCHEMA.md** - Quiz data format and registry structure
 - **DEPLOYMENT.md** - Setup and deployment instructions
-- **API_ROUTES.md** - Route documentation
+- **API_ROUTES.md** - Route documentation with examples
+- **DEVELOPMENT.md** - This file
 
 ## Common Development Tasks
 
-### Add a New Question
+### Add a New Quiz Topic
 
-1. Edit `data/quizzes.json`
-2. Locate category or add new category object
-3. Add question object to `questions` array:
+1. **Create Quiz File**: Create `data/{quiz_id}.json`:
+   ```json
+   {
+     "questions": [
+       {
+         "text": "Question 1?",
+         "options": ["A", "B", "C"],
+         "correct": [0],
+         "type": "single",
+         "image": null
+       }
+     ]
+   }
+   ```
+
+2. **Register Quiz**: Edit `data/quizzes_registry.json` and add:
+   ```json
+   {
+     "id": "{quiz_id}",
+     "name": "Display Name",
+     "file": "data/{quiz_id}.json"
+   }
+   ```
+
+3. **Restart App**: Restart Flask app to load registry changes
+
+4. **Test**: Verify quiz appears in home page dropdown and questions load correctly
+
+5. **Commit**: 
+   ```bash
+   git add data/{quiz_id}.json data/quizzes_registry.json
+   git commit -m "Feature: Add {Display Name} quiz with X questions"
+   ```
+
+### Add a New Question to Existing Quiz
+
+1. Edit `data/{quiz_id}.json`
+2. Add question object to `questions` array:
    ```json
    {
      "text": "What is...?",
-     "options": ["A", "B", "C"],
+     "options": ["Option A", "Option B", "Option C"],
      "correct": [0],
      "type": "single",
      "image": null
    }
    ```
-4. Save file
-5. Reload browser (no app restart needed if quizzes.json loaded per-request)
+   
+   For multi-choice:
+   ```json
+   {
+     "text": "Which are correct? (Select all that apply)",
+     "options": ["Option A", "Option B", "Option C"],
+     "correct": [0, 2],
+     "type": "multi",
+     "image": null
+   }
+   ```
+
+3. Save file and test by taking the quiz
+4. Commit:
+   ```bash
+   git add data/{quiz_id}.json
+   git commit -m "Add question to {quiz_name}: {brief question description}"
+   ```
 
 ### Add Question Image
 
 1. Place image file in `img/` folder (supports subdirectories)
-2. Reference in quizzes.json:
-   ```json
-   "image": "filename.png"  // Root img/ folder
-   "image": "subfolder/filename.png"  // Nested
    ```
-3. Image will display in quiz if path is correct
+   img/physics/forces.png
+   img/gcp/architecture.png
+   ```
+
+2. Reference in quiz JSON:
+   ```json
+   "image": "physics/forces.png"
+   ```
+
+3. Image displays in quiz and results pages automatically
+
+### Test Multi-Choice Questions
+
+1. Navigate to quiz with multi-choice questions
+2. Verify hint displays: "(Select X correct answers)"
+3. Test grading by:
+   - Selecting all correct answers → Should pass ✓
+   - Selecting only some correct answers → Should fail ✗
+   - Selecting correct + incorrect answers → Should fail ✗
+   - Selecting no answers → Should fail ✗
+
+### Test History Feature
+
+1. Complete a quiz (note the score and date)
+2. Complete another quiz with different questions
+3. Navigate to "View History" button
+4. Verify last 2 attempts appear in table
+5. Click "View Details" on one attempt
+6. Verify attempt metadata displays (quiz name, score, date)
 
 ### Modify Quiz Styling
 
@@ -77,10 +166,11 @@ python app.py
    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
    ```
 3. Add custom classes or override Bootstrap
+4. Restart app to load CSS changes
 
 ### Add New Route/Page
 
-1. Create HTML template in `templates/`
+1. Create HTML template in `templates/new_page.html`
 2. Add route to `app.py`:
    ```python
    @app.route('/new_page')
@@ -88,16 +178,77 @@ python app.py
        return render_template('new_page.html', variable=value)
    ```
 3. Link from existing page via href or form action
+4. Test by accessing `/new_page`
+5. Commit:
+   ```bash
+   git add app.py templates/new_page.html
+   git commit -m "Feature: Add new page with description"
+   ```
 
 ### Change Timer Logic
 
 **Client-side adjustment** (in quiz.html):
 - Modify JavaScript `updateTimer()` function
-- Change `setInterval()` timing or format
+- Change `setInterval()` timing (currently 1000ms = 1 second)
+- Modify MM:SS format display
 
 **Server-side adjustment** (in app.py):
-- Validate timer in `/start_quiz` route
 - Add server-side timeout enforcement in `/submit_quiz`
+- Validate quiz completion time against timer duration
+- Example: Check if `datetime.now() - session['start_time']` exceeds timer
+
+### Debug Quiz Loading Issues
+
+1. **Check Registry**: Verify `data/quizzes_registry.json` is valid JSON
+   ```bash
+   python -c "import json; json.load(open('data/quizzes_registry.json'))"
+   ```
+
+2. **Check Quiz File**: Verify individual quiz file is valid JSON
+   ```bash
+   python -c "import json; json.load(open('data/gce.json'))"
+   ```
+
+3. **Check Flask Logs**: Watch terminal output for errors when quiz loads
+
+4. **Verify File Paths**: Ensure file paths in registry match actual filenames
+
+### Monitor Database Changes
+
+1. View scores table:
+   ```bash
+   python -c "import sqlite3; c = sqlite3.connect('data/scores.db'); print(list(c.execute('SELECT * FROM scores ORDER BY date DESC LIMIT 3')))"
+   ```
+
+2. Check if answers column exists:
+   ```bash
+   python -c "import sqlite3; c = sqlite3.connect('data/scores.db'); print([col[1] for col in c.execute('PRAGMA table_info(scores)')])"
+   ```
+
+## Testing Workflow
+
+1. **Unit Testing**: Test individual components (routes, grading logic)
+   - Take quizzes with known answers
+   - Verify score calculation
+   - Check database persistence
+
+2. **Integration Testing**: Test full workflows
+   - Quiz selection → submission → results → history
+   - Timer expiration
+   - Multi-choice grading
+
+3. **Regression Testing**: After changes, verify
+   - Existing quizzes still load
+   - Previous scores still display
+   - History page still functions
+
+## Code Standards
+
+- **Naming**: Use snake_case for Python functions, camelCase for JavaScript
+- **Comments**: Add comments for complex logic (grading, session management)
+- **Docstrings**: Add docstrings to routes explaining purpose
+- **Error Handling**: Redirect on errors rather than 500 pages
+- **Validation**: Validate quiz_id and user inputs before processing
 
 ### Query Score Database
 

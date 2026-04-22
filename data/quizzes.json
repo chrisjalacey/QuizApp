@@ -15,7 +15,7 @@
           "options": ["2", "3", "4", "5"],
           "correct": [0, 1, 3],
           "type": "multi",
-          "image": "img/math_primes.png"
+          "image": null
         }
       ]
     },
@@ -25,6 +25,151 @@
         {
           "text": "What is the chemical symbol for water?",
           "options": ["H2O", "CO2", "O2"],
+          "correct": [0],
+          "type": "single",
+          "image": null
+        }
+      ]
+    },
+    {
+      "name": "Google Associate Cloud Engineer",
+      "questions": [
+        {
+          "text": "Which compute service in GCP provides a serverless container execution environment without managing infrastructure?",
+          "options": ["Compute Engine", "Cloud Run", "App Engine", "Google Kubernetes Engine"],
+          "correct": [1],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "What is the primary purpose of Cloud IAM in Google Cloud Platform?",
+          "options": ["Manage virtual machine instances", "Control access and permissions to GCP resources", "Monitor application performance", "Deploy containers"],
+          "correct": [1],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which storage service should you use for unstructured data like images, videos, and documents?",
+          "options": ["Cloud SQL", "Cloud Firestore", "Cloud Storage", "BigTable"],
+          "correct": [2],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which of the following are valid instance metadata that can be queried from a Compute Engine VM?",
+          "options": ["Machine type", "Zone", "Project ID", "Service account email", "External IP address"],
+          "correct": [0, 1, 2, 3, 4],
+          "type": "multi",
+          "image": null
+        },
+        {
+          "text": "What is a VPC in Google Cloud Platform?",
+          "options": ["A Virtual Private Cloud that allows you to define your own network topology and manage private networks", "A service for managing databases", "A container orchestration platform", "A load balancing service"],
+          "correct": [0],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which services can be used for relational databases in Google Cloud? (Select all that apply)",
+          "options": ["Cloud SQL", "Cloud Spanner", "BigQuery", "Cloud Firestore", "Cloud Datastore"],
+          "correct": [0, 1],
+          "type": "multi",
+          "image": null
+        },
+        {
+          "text": "What is the primary use case for BigQuery?",
+          "options": ["Running transactional OLTP workloads", "Real-time analytics and data warehouse queries on large datasets", "Storing unstructured media files", "Running containerized applications"],
+          "correct": [1],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which firewall rule direction is used to control outbound traffic from instances?",
+          "options": ["Ingress", "Egress", "Bidirectional", "Default"],
+          "correct": [1],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "What is Cloud Load Balancing primarily used for?",
+          "options": ["Distributing traffic across multiple backend instances", "Managing databases", "Storing files", "Running batch jobs"],
+          "correct": [0],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which IAM role includes permissions for all Google Cloud services?",
+          "options": ["Editor", "Owner", "Viewer", "Security Admin"],
+          "correct": [0],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "What are the characteristics of Google Cloud Storage buckets?",
+          "options": ["Globally distributed", "Must be located in a specific region", "Can be accessed from any region", "Require a VM to access", "Are immutable by default"],
+          "correct": [0, 2],
+          "type": "multi",
+          "image": null
+        },
+        {
+          "text": "Which service should you use to deploy a containerized application without managing Kubernetes?",
+          "options": ["Compute Engine", "Google Kubernetes Engine (GKE)", "Cloud Run", "App Engine"],
+          "correct": [2],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "What is the purpose of Cloud KMS?",
+          "options": ["Key management and encryption for sensitive data", "Monitoring application logs", "Managing virtual networks", "Load balancing traffic"],
+          "correct": [0],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which of the following can be monitored using Cloud Monitoring?",
+          "options": ["CPU usage", "Memory utilization", "Network traffic", "Disk I/O", "Custom application metrics"],
+          "correct": [0, 1, 2, 3, 4],
+          "type": "multi",
+          "image": null
+        },
+        {
+          "text": "What is the main difference between Cloud Storage Standard and Nearline storage classes?",
+          "options": ["Nearline has higher latency and lower cost", "Standard is slower than Nearline", "Nearline supports fewer regions", "They are identical in performance"],
+          "correct": [0],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which service allows you to run fully managed Apache Spark and Hadoop clusters?",
+          "options": ["Cloud Dataflow", "Cloud Dataproc", "Cloud Run", "Compute Engine"],
+          "correct": [1],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "What is the purpose of a Cloud NAT?",
+          "options": ["Allow private instances to initiate outbound connections", "Load balance incoming traffic", "Encrypt data in transit", "Manage DNS records"],
+          "correct": [0],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which of these are ways to authenticate to Google Cloud services?",
+          "options": ["Service accounts", "User accounts", "API keys", "OAuth 2.0 tokens", "Passwords"],
+          "correct": [0, 1, 2, 3],
+          "type": "multi",
+          "image": null
+        },
+        {
+          "text": "What does the 'predefined role' Editor include?",
+          "options": ["Full read and write access to most GCP resources", "Read-only access to all resources", "Only access to compute resources", "No access to any resources"],
+          "correct": [0],
+          "type": "single",
+          "image": null
+        },
+        {
+          "text": "Which network topology allows you to connect VPCs from different projects?",
+          "options": ["VPC Peering", "Cloud Interconnect", "Cloud VPN", "Cloud NAT"],
           "correct": [0],
           "type": "single",
           "image": null
