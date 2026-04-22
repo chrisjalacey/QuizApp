@@ -1,0 +1,19 @@
+{
+  "quizzes": [
+    {
+      "id": "math",
+      "name": "Mathematics",
+      "file": "data/math.json"
+    },
+    {
+      "id": "science",
+      "name": "Science",
+      "file": "data/science.json"
+    },
+    {
+      "id": "gce",
+      "name": "Google Associate Cloud Engineer",
+      "file": "data/gce.json"
+    }
+  ]
+}

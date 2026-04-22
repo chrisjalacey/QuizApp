@@ -9,12 +9,29 @@ app = Flask(__name__)
 app.secret_key = 'quiz_app_secret_key'  # Change in production
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
-QUIZ_FILE = os.path.join(DATA_DIR, 'quizzes.json')
+REGISTRY_FILE = os.path.join(DATA_DIR, 'quizzes_registry.json')
 DB_FILE = os.path.join(DATA_DIR, 'scores.db')
 
-def load_quiz_data():
-    with open(QUIZ_FILE, 'r') as f:
+def load_quizzes_registry():
+    """Load the quizzes registry to get list of available quizzes."""
+    with open(REGISTRY_FILE, 'r') as f:
         return json.load(f)
+
+def load_quiz(quiz_id):
+    """Load a specific quiz by its ID from the registry and file."""
+    registry = load_quizzes_registry()
+    quiz_info = None
+    for q in registry['quizzes']:
+        if q['id'] == quiz_id:
+            quiz_info = q
+            break
+    
+    if not quiz_info:
+        return None
+    
+    quiz_file = os.path.join(os.path.dirname(__file__), quiz_info['file'])
+    with open(quiz_file, 'r') as f:
+        return {'id': quiz_id, 'name': quiz_info['name'], 'data': json.load(f)}
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
@@ -32,38 +49,32 @@ def serve_img(filename):
 
 @app.route('/')
 def home():
-    data = load_quiz_data()
-    categories = [cat['name'] for cat in data['categories']]
-    return render_template('index.html', categories=categories)
+    registry = load_quizzes_registry()
+    quizzes = registry['quizzes']
+    return render_template('index.html', quizzes=quizzes)
 
 @app.route('/start_quiz', methods=['POST'])
 def start_quiz():
-    data = load_quiz_data()
-    selected_questions = []
-    categories_selected = []
-    question_counts = {}
+    quiz_id = request.form.get('quiz_id')
+    count = request.form.get('count', '0')
     
-    for cat in data['categories']:
-        count_key = f'count_{cat["name"]}'
-        count = request.form.get(count_key, '0')
-        if count.isdigit() and int(count) > 0:
-            num = int(count)
-            available = len(cat['questions'])
-            num = min(num, available)
-            selected = random.sample(cat['questions'], num)
-            selected_questions.extend(selected)
-            categories_selected.append(cat['name'])
-            question_counts[cat['name']] = num
+    if not quiz_id or not count.isdigit() or int(count) == 0:
+        return redirect(url_for('home'))
     
-    if not selected_questions:
-        return redirect(url_for('home'))  # No questions selected
+    quiz = load_quiz(quiz_id)
+    if not quiz:
+        return redirect(url_for('home'))
     
+    questions = quiz['data'].get('questions', [])
+    num = min(int(count), len(questions))
+    selected_questions = random.sample(questions, num)
     random.shuffle(selected_questions)
+    
     session['questions'] = selected_questions
     session['current'] = 0
     session['answers'] = {}
-    session['categories'] = categories_selected
-    session['question_counts'] = question_counts
+    session['quiz_id'] = quiz_id
+    session['quiz_name'] = quiz['name']
     session['timer'] = request.form.get('timer', '')
     session['start_time'] = datetime.now().isoformat()
     
@@ -98,7 +109,10 @@ def submit_quiz():
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
     c.execute('INSERT INTO scores (date, score, total, percentage, categories, question_counts, timer_used) VALUES (?, ?, ?, ?, ?, ?, ?)',
-              (datetime.now().isoformat(), score, total, percentage, json.dumps(session.get('categories', [])), json.dumps(session.get('question_counts', {})), int(session.get('timer', 0) or 0)))
+              (datetime.now().isoformat(), score, total, percentage, 
+               json.dumps([session.get('quiz_name', 'Unknown')]), 
+               json.dumps({'questions': total}), 
+               int(session.get('timer', 0) or 0)))
     conn.commit()
     conn.close()
     

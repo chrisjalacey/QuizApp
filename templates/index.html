@@ -8,19 +8,24 @@
 </head>
 <body>
     <div class="container mt-5">
-        <h1 class="text-center">Quiz App</h1>
+        <h1 class="text-center mb-4">Quiz App</h1>
         <form action="{{ url_for('start_quiz') }}" method="post">
-            <div id="categories">
-                {% for category in categories %}
-                <div class="mb-3">
-                    <label class="form-label">{{ category }}</label>
-                    <input type="number" class="form-control" name="count_{{ category }}" min="0" placeholder="Number of questions">
-                </div>
-                {% endfor %}
+            <div class="mb-3">
+                <label for="quiz_select" class="form-label">Select a Quiz</label>
+                <select class="form-select" id="quiz_select" name="quiz_id" required>
+                    <option value="">-- Choose a quiz --</option>
+                    {% for quiz in quizzes %}
+                    <option value="{{ quiz.id }}">{{ quiz.name }}</option>
+                    {% endfor %}
+                </select>
             </div>
             <div class="mb-3">
-                <label class="form-label">Timer (minutes, optional)</label>
-                <input type="number" class="form-control" name="timer" min="0" placeholder="Leave blank for no timer">
+                <label for="count" class="form-label">Number of Questions</label>
+                <input type="number" class="form-control" id="count" name="count" min="1" placeholder="e.g., 5" required>
+            </div>
+            <div class="mb-3">
+                <label for="timer" class="form-label">Timer (minutes, optional)</label>
+                <input type="number" class="form-control" id="timer" name="timer" min="0" placeholder="Leave blank for no timer">
             </div>
             <button type="submit" class="btn btn-primary">Start Quiz</button>
         </form>

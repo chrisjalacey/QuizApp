@@ -16,6 +16,9 @@
             {% for i in range(questions|length) %}
             <div class="mb-4">
                 <h5>{{ i+1 }}. {{ questions[i].text }}</h5>
+                {% if questions[i].type == 'multi' %}
+                <p class="text-muted small">(Select {{ questions[i].correct|length }} correct answer{{ 's' if questions[i].correct|length != 1 else '' }})</p>
+                {% endif %}
                 {% if questions[i].image %}
                 <img src="/img/{{ questions[i].image }}" alt="Question image" class="img-fluid mb-2">
                 {% endif %}
