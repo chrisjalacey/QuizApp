@@ -5,7 +5,8 @@
       "options": ["H2O", "CO2", "O2"],
       "correct": [0],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "H2O is the chemical formula for water, consisting of 2 hydrogen atoms and 1 oxygen atom."
     }
   ]
 }

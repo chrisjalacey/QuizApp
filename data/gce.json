@@ -5,140 +5,160 @@
       "options": ["Compute Engine", "Cloud Run", "App Engine", "Google Kubernetes Engine"],
       "correct": [1],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Cloud Run is a fully managed compute platform that automatically scales your containerized applications without requiring you to manage infrastructure."
     },
     {
       "text": "What is the primary purpose of Cloud IAM in Google Cloud Platform?",
       "options": ["Manage virtual machine instances", "Control access and permissions to GCP resources", "Monitor application performance", "Deploy containers"],
       "correct": [1],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Cloud IAM provides unified access control across all GCP services, allowing you to manage who can access which resources with what permissions."
     },
     {
       "text": "Which storage service should you use for unstructured data like images, videos, and documents?",
       "options": ["Cloud SQL", "Cloud Firestore", "Cloud Storage", "BigTable"],
       "correct": [2],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Cloud Storage is designed for storing unstructured objects like images, videos, and documents with high durability and availability."
     },
     {
       "text": "Which of the following are valid instance metadata that can be queried from a Compute Engine VM?",
       "options": ["Machine type", "Zone", "Project ID", "Service account email", "External IP address"],
       "correct": [0, 1, 2, 3, 4],
       "type": "multi",
-      "image": null
+      "image": null,
+      "explanation": "All of these are valid instance metadata items that can be queried using the metadata server. This includes machine type, zone, project ID, service account email, and external IP address."
     },
     {
       "text": "What is a VPC in Google Cloud Platform?",
       "options": ["A Virtual Private Cloud that allows you to define your own network topology and manage private networks", "A service for managing databases", "A container orchestration platform", "A load balancing service"],
       "correct": [0],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "A VPC is a Virtual Private Cloud that provides networking functionality for your GCP resources, allowing you to define network topology, IP ranges, and routing."
     },
     {
       "text": "Which services can be used for relational databases in Google Cloud? (Select all that apply)",
       "options": ["Cloud SQL", "Cloud Spanner", "BigQuery", "Cloud Firestore", "Cloud Datastore"],
       "correct": [0, 1],
       "type": "multi",
-      "image": null
+      "image": null,
+      "explanation": "Cloud SQL and Cloud Spanner are the relational database services in GCP. BigQuery is a data warehouse, and Firestore/Datastore are NoSQL document databases."
     },
     {
       "text": "What is the primary use case for BigQuery?",
       "options": ["Running transactional OLTP workloads", "Real-time analytics and data warehouse queries on large datasets", "Storing unstructured media files", "Running containerized applications"],
       "correct": [1],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "BigQuery is a serverless, highly scalable, and cost-effective multi-cloud data warehouse designed for analytics on large datasets."
     },
     {
       "text": "Which firewall rule direction is used to control outbound traffic from instances?",
       "options": ["Ingress", "Egress", "Bidirectional", "Default"],
       "correct": [1],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Egress firewall rules control outbound traffic from your instances. By default, all egress is allowed, but you can create egress rules to restrict outbound connections."
     },
     {
       "text": "What is Cloud Load Balancing primarily used for?",
       "options": ["Distributing traffic across multiple backend instances", "Managing databases", "Storing files", "Running batch jobs"],
       "correct": [0],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Cloud Load Balancing distributes incoming traffic across multiple backend instances to ensure no single instance is overwhelmed, improving reliability and performance."
     },
     {
       "text": "Which IAM role includes permissions for all Google Cloud services?",
       "options": ["Editor", "Owner", "Viewer", "Security Admin"],
       "correct": [0],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "The Editor role (roles/editor) includes permissions to use most GCP resources and services, including create, read, update, and delete operations."
     },
     {
       "text": "What are the characteristics of Google Cloud Storage buckets?",
       "options": ["Globally distributed", "Must be located in a specific region", "Can be accessed from any region", "Require a VM to access", "Are immutable by default"],
       "correct": [0, 2],
       "type": "multi",
-      "image": null
+      "image": null,
+      "explanation": "Cloud Storage buckets are globally distributed and can be accessed from any region. They don't require a VM to access and support versioning for immutability."
     },
     {
       "text": "Which service should you use to deploy a containerized application without managing Kubernetes?",
       "options": ["Compute Engine", "Google Kubernetes Engine (GKE)", "Cloud Run", "App Engine"],
       "correct": [2],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Cloud Run allows you to deploy containerized applications without managing Kubernetes. It automatically handles scaling and infrastructure."
     },
     {
       "text": "What is the purpose of Cloud KMS?",
       "options": ["Key management and encryption for sensitive data", "Monitoring application logs", "Managing virtual networks", "Load balancing traffic"],
       "correct": [0],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Cloud KMS (Key Management Service) provides cryptographic keys for encrypting, decrypting, and signing data across GCP services."
     },
     {
       "text": "Which of the following can be monitored using Cloud Monitoring?",
       "options": ["CPU usage", "Memory utilization", "Network traffic", "Disk I/O", "Custom application metrics"],
       "correct": [0, 1, 2, 3, 4],
       "type": "multi",
-      "image": null
+      "image": null,
+      "explanation": "Cloud Monitoring can monitor all of these: CPU usage, memory utilization, network traffic, disk I/O, and custom application metrics through custom metrics."
     },
     {
       "text": "What is the main difference between Cloud Storage Standard and Nearline storage classes?",
       "options": ["Nearline has higher latency and lower cost", "Standard is slower than Nearline", "Nearline supports fewer regions", "They are identical in performance"],
       "correct": [0],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Nearline storage has slightly higher latency (first byte access within milliseconds) but lower costs, making it ideal for data accessed less than once a month."
     },
     {
       "text": "Which service allows you to run fully managed Apache Spark and Hadoop clusters?",
       "options": ["Cloud Dataflow", "Cloud Dataproc", "Cloud Run", "Compute Engine"],
       "correct": [1],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Cloud Dataproc provides a fully managed Apache Spark and Hadoop service, allowing you to process large datasets without managing clusters."
     },
     {
       "text": "What is the purpose of a Cloud NAT?",
       "options": ["Allow private instances to initiate outbound connections", "Load balance incoming traffic", "Encrypt data in transit", "Manage DNS records"],
       "correct": [0],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "Cloud NAT allows private instances without external IP addresses to access the internet for updates and patches while remaining secure."
     },
     {
       "text": "Which of these are ways to authenticate to Google Cloud services?",
       "options": ["Service accounts", "User accounts", "API keys", "OAuth 2.0 tokens", "Passwords"],
       "correct": [0, 1, 2, 3],
       "type": "multi",
-      "image": null
+      "image": null,
+      "explanation": "Service accounts, user accounts, API keys, and OAuth 2.0 tokens are all valid authentication methods. Passwords are not used for GCP authentication."
     },
     {
       "text": "What does the 'predefined role' Editor include?",
       "options": ["Full read and write access to most GCP resources", "Read-only access to all resources", "Only access to compute resources", "No access to any resources"],
       "correct": [0],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "The Editor role (roles/editor) provides full read and write access to most GCP resources, including the ability to modify and delete resources."
     },
     {
       "text": "Which network topology allows you to connect VPCs from different projects?",
       "options": ["VPC Peering", "Cloud Interconnect", "Cloud VPN", "Cloud NAT"],
       "correct": [0],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "VPC Peering allows you to connect VPC networks between different projects or organizations, enabling traffic between resources in different projects."
     }
   ]
 }

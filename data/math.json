@@ -5,14 +5,16 @@
       "options": ["3", "4", "5"],
       "correct": [1],
       "type": "single",
-      "image": null
+      "image": null,
+      "explanation": "2 + 2 equals 4. This is basic addition."
     },
     {
       "text": "Which of these are prime numbers?",
       "options": ["2", "3", "4", "5"],
       "correct": [0, 1, 3],
       "type": "multi",
-      "image": null
+      "image": null,
+      "explanation": "2, 3, and 5 are prime numbers. A prime number is only divisible by 1 and itself. 4 is not prime because it can be divided by 2."
     }
   ]
 }

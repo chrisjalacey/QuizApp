@@ -128,7 +128,8 @@ def submit_quiz():
             'user_answers': user_ans,
             'user_labels': user_labels,
             'is_correct': is_correct,
-            'image': q.get('image')
+            'image': q.get('image'),
+            'explanation': q.get('explanation', '')
         }
         review_data.append(review_item)
     
@@ -210,9 +211,45 @@ def history_detail(attempt_id):
     answers_list = json.loads(answers_json) if answers_json else []
     
     # Reconstruct review data from answers
-    # We need to load the quiz file to get questions
-    # For now, we'll display a simple version with just the answers
+    # Need to load the quiz file to get questions with explanations
     review_data = []
+    
+    # Try to find the quiz by name from registry
+    registry = load_quizzes_registry()
+    quiz_id = None
+    for q in registry['quizzes']:
+        if q['name'] == quiz_name:
+            quiz_id = q['id']
+            break
+    
+    if quiz_id:
+        quiz = load_quiz(quiz_id)
+        if quiz and 'questions' in quiz['data']:
+            questions = quiz['data']['questions']
+            # Map stored answers to questions
+            for i, user_ans in enumerate(answers_list):
+                if i < len(questions):
+                    q = questions[i]
+                    correct = q.get('correct', [])
+                    is_correct = set(user_ans) == set(correct)
+                    user_labels = [q['options'][idx] for idx in user_ans] if user_ans else []
+                    correct_labels = [q['options'][idx] for idx in correct]
+                    
+                    review_item = {
+                        'question_index': i,
+                        'question_text': q.get('text', ''),
+                        'question_type': q.get('type', 'single'),
+                        'options': q.get('options', []),
+                        'correct_indices': correct,
+                        'correct_labels': correct_labels,
+                        'correct_count': len(correct),
+                        'user_answers': user_ans,
+                        'user_labels': user_labels,
+                        'is_correct': is_correct,
+                        'image': q.get('image'),
+                        'explanation': q.get('explanation', '')
+                    }
+                    review_data.append(review_item)
     
     return render_template('history_detail.html', 
                          attempt_id=attempt_id,

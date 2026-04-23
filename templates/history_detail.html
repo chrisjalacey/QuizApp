@@ -41,8 +41,13 @@
                 <div id="question{{ loop.index0 }}" class="accordion-collapse collapse {% if item.is_correct %}show{% endif %}" data-bs-parent="#questionAccordion">
                     <div class="accordion-body">
                         <p><strong>Question:</strong> {{ item.question_text }}</p>
-                        <p><strong>Your Answer:</strong> {{ item.user_answer }}</p>
-                        <p><strong>Correct Answer:</strong> {{ item.correct_answer }}</p>
+                        <p><strong>Your Answer:</strong> {{ item.user_labels|join(', ') }}</p>
+                        <p><strong>Correct Answer:</strong> {{ item.correct_labels|join(', ') }}</p>
+                        {% if item.explanation %}
+                        <div class="alert alert-info mt-2">
+                            <strong>Explanation:</strong> {{ item.explanation }}
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
