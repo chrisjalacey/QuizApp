@@ -31,7 +31,8 @@ def load_quiz(quiz_id):
     
     quiz_file = os.path.join(os.path.dirname(__file__), quiz_info['file'])
     with open(quiz_file, 'r') as f:
-        return {'id': quiz_id, 'name': quiz_info['name'], 'data': json.load(f)}
+        data = json.load(f)
+        return {'id': quiz_id, 'name': quiz_info['name'], 'data': data, 'sections': data.get('sections', [])}
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
@@ -58,12 +59,24 @@ def serve_img(filename):
 def home():
     registry = load_quizzes_registry()
     quizzes = registry['quizzes']
-    return render_template('index.html', quizzes=quizzes)
+    
+    # Load sections for each quiz
+    quizzes_with_sections = []
+    for q in quizzes:
+        quiz_data = load_quiz(q['id'])
+        quizzes_with_sections.append({
+            'id': q['id'],
+            'name': q['name'],
+            'sections': quiz_data.get('sections', [])
+        })
+    
+    return render_template('index.html', quizzes=quizzes_with_sections)
 
 @app.route('/start_quiz', methods=['POST'])
 def start_quiz():
     quiz_id = request.form.get('quiz_id')
     count = request.form.get('count', '0')
+    sections = request.form.getlist('sections')  # Get selected sections
     
     if not quiz_id or not count.isdigit() or int(count) == 0:
         return redirect(url_for('home'))
@@ -72,8 +85,20 @@ def start_quiz():
     if not quiz:
         return redirect(url_for('home'))
     
-    questions = quiz['data'].get('questions', [])
+    all_questions = quiz['data'].get('questions', [])
+    
+    # Filter by sections if any are selected
+    if sections:
+        questions = [q for q in all_questions if q.get('section') in sections]
+    else:
+        questions = all_questions
+    
     num = min(int(count), len(questions))
+    if num == 0:
+        # Fall back to all questions if not enough in selected sections
+        questions = all_questions
+        num = min(int(count), len(questions))
+    
     selected_questions = random.sample(questions, num)
     random.shuffle(selected_questions)
     
@@ -84,6 +109,7 @@ def start_quiz():
     session['quiz_name'] = quiz['name']
     session['timer'] = request.form.get('timer', '')
     session['start_time'] = datetime.now().isoformat()
+    session['sections'] = sections  # Store selected sections
     
     return redirect(url_for('quiz'))
 

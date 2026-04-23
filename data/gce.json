@@ -1,4 +1,11 @@
 {
+  "sections": [
+    {"id": "setup", "name": "Setting up a cloud solution environment", "description": "Project creation, IAM, billing, API enablement"},
+    {"id": "planning", "name": "Planning and configuring a cloud solution", "description": "Compute options, storage choices, network design"},
+    {"id": "deploy", "name": "Deploying and implementing a cloud solution", "description": "Deployment, configuration, migration"},
+    {"id": "operate", "name": "Ensuring successful operation of a cloud solution", "description": "Monitoring, logging, optimization"},
+    {"id": "security", "name": "Configuring access and security", "description": "IAM roles, VPC, firewall, encryption"}
+  ],
   "questions": [
     {
       "text": "Which compute service in GCP provides a serverless container execution environment without managing infrastructure?",
@@ -6,7 +13,8 @@
       "correct": [1],
       "type": "single",
       "image": null,
-      "explanation": "Cloud Run is a fully managed compute platform that automatically scales your containerized applications without requiring you to manage infrastructure."
+      "explanation": "Cloud Run is a fully managed compute platform that automatically scales your containerized applications without requiring you to manage infrastructure.",
+      "section": "deploy"
     },
     {
       "text": "What is the primary purpose of Cloud IAM in Google Cloud Platform?",
@@ -14,7 +22,8 @@
       "correct": [1],
       "type": "single",
       "image": null,
-      "explanation": "Cloud IAM provides unified access control across all GCP services, allowing you to manage who can access which resources with what permissions."
+      "explanation": "Cloud IAM provides unified access control across all GCP services, allowing you to manage who can access which resources with what permissions.",
+      "section": "security"
     },
     {
       "text": "Which storage service should you use for unstructured data like images, videos, and documents?",
@@ -22,7 +31,8 @@
       "correct": [2],
       "type": "single",
       "image": null,
-      "explanation": "Cloud Storage is designed for storing unstructured objects like images, videos, and documents with high durability and availability."
+      "explanation": "Cloud Storage is designed for storing unstructured objects like images, videos, and documents with high durability and availability.",
+      "section": "planning"
     },
     {
       "text": "Which of the following are valid instance metadata that can be queried from a Compute Engine VM?",
@@ -30,7 +40,8 @@
       "correct": [0, 1, 2, 3, 4],
       "type": "multi",
       "image": null,
-      "explanation": "All of these are valid instance metadata items that can be queried using the metadata server. This includes machine type, zone, project ID, service account email, and external IP address."
+      "explanation": "All of these are valid instance metadata items that can be queried using the metadata server.",
+      "section": "setup"
     },
     {
       "text": "What is a VPC in Google Cloud Platform?",
@@ -38,7 +49,8 @@
       "correct": [0],
       "type": "single",
       "image": null,
-      "explanation": "A VPC is a Virtual Private Cloud that provides networking functionality for your GCP resources, allowing you to define network topology, IP ranges, and routing."
+      "explanation": "A VPC is a Virtual Private Cloud that provides networking functionality for your GCP resources.",
+      "section": "planning"
     },
     {
       "text": "Which services can be used for relational databases in Google Cloud? (Select all that apply)",
@@ -46,7 +58,8 @@
       "correct": [0, 1],
       "type": "multi",
       "image": null,
-      "explanation": "Cloud SQL and Cloud Spanner are the relational database services in GCP. BigQuery is a data warehouse, and Firestore/Datastore are NoSQL document databases."
+      "explanation": "Cloud SQL and Cloud Spanner are the relational database services in GCP.",
+      "section": "planning"
     },
     {
       "text": "What is the primary use case for BigQuery?",
@@ -54,7 +67,8 @@
       "correct": [1],
       "type": "single",
       "image": null,
-      "explanation": "BigQuery is a serverless, highly scalable, and cost-effective multi-cloud data warehouse designed for analytics on large datasets."
+      "explanation": "BigQuery is a serverless, highly scalable, and cost-effective multi-cloud data warehouse designed for analytics on large datasets.",
+      "section": "operate"
     },
     {
       "text": "Which firewall rule direction is used to control outbound traffic from instances?",
@@ -62,7 +76,8 @@
       "correct": [1],
       "type": "single",
       "image": null,
-      "explanation": "Egress firewall rules control outbound traffic from your instances. By default, all egress is allowed, but you can create egress rules to restrict outbound connections."
+      "explanation": "Egress firewall rules control outbound traffic from your instances.",
+      "section": "security"
     },
     {
       "text": "What is Cloud Load Balancing primarily used for?",
@@ -70,7 +85,8 @@
       "correct": [0],
       "type": "single",
       "image": null,
-      "explanation": "Cloud Load Balancing distributes incoming traffic across multiple backend instances to ensure no single instance is overwhelmed, improving reliability and performance."
+      "explanation": "Cloud Load Balancing distributes incoming traffic across multiple backend instances.",
+      "section": "deploy"
     },
     {
       "text": "Which IAM role includes permissions for all Google Cloud services?",
@@ -78,7 +94,8 @@
       "correct": [0],
       "type": "single",
       "image": null,
-      "explanation": "The Editor role (roles/editor) includes permissions to use most GCP resources and services, including create, read, update, and delete operations."
+      "explanation": "The Editor role includes permissions to use most GCP resources and services.",
+      "section": "security"
     },
     {
       "text": "What are the characteristics of Google Cloud Storage buckets?",
@@ -86,7 +103,8 @@
       "correct": [0, 2],
       "type": "multi",
       "image": null,
-      "explanation": "Cloud Storage buckets are globally distributed and can be accessed from any region. They don't require a VM to access and support versioning for immutability."
+      "explanation": "Cloud Storage buckets are globally distributed and can be accessed from any region.",
+      "section": "planning"
     },
     {
       "text": "Which service should you use to deploy a containerized application without managing Kubernetes?",
@@ -94,7 +112,8 @@
       "correct": [2],
       "type": "single",
       "image": null,
-      "explanation": "Cloud Run allows you to deploy containerized applications without managing Kubernetes. It automatically handles scaling and infrastructure."
+      "explanation": "Cloud Run allows you to deploy containerized applications without managing Kubernetes.",
+      "section": "deploy"
     },
     {
       "text": "What is the purpose of Cloud KMS?",
@@ -102,7 +121,8 @@
       "correct": [0],
       "type": "single",
       "image": null,
-      "explanation": "Cloud KMS (Key Management Service) provides cryptographic keys for encrypting, decrypting, and signing data across GCP services."
+      "explanation": "Cloud KMS provides cryptographic keys for encrypting, decrypting, and signing data across GCP services.",
+      "section": "security"
     },
     {
       "text": "Which of the following can be monitored using Cloud Monitoring?",
@@ -110,7 +130,8 @@
       "correct": [0, 1, 2, 3, 4],
       "type": "multi",
       "image": null,
-      "explanation": "Cloud Monitoring can monitor all of these: CPU usage, memory utilization, network traffic, disk I/O, and custom application metrics through custom metrics."
+      "explanation": "Cloud Monitoring can monitor all of these metrics.",
+      "section": "operate"
     },
     {
       "text": "What is the main difference between Cloud Storage Standard and Nearline storage classes?",
@@ -118,7 +139,8 @@
       "correct": [0],
       "type": "single",
       "image": null,
-      "explanation": "Nearline storage has slightly higher latency (first byte access within milliseconds) but lower costs, making it ideal for data accessed less than once a month."
+      "explanation": "Nearline storage has slightly higher latency but lower costs.",
+      "section": "planning"
     },
     {
       "text": "Which service allows you to run fully managed Apache Spark and Hadoop clusters?",
@@ -126,7 +148,8 @@
       "correct": [1],
       "type": "single",
       "image": null,
-      "explanation": "Cloud Dataproc provides a fully managed Apache Spark and Hadoop service, allowing you to process large datasets without managing clusters."
+      "explanation": "Cloud Dataproc provides a fully managed Apache Spark and Hadoop service.",
+      "section": "operate"
     },
     {
       "text": "What is the purpose of a Cloud NAT?",
@@ -134,7 +157,8 @@
       "correct": [0],
       "type": "single",
       "image": null,
-      "explanation": "Cloud NAT allows private instances without external IP addresses to access the internet for updates and patches while remaining secure."
+      "explanation": "Cloud NAT allows private instances without external IP addresses to access the internet.",
+      "section": "security"
     },
     {
       "text": "Which of these are ways to authenticate to Google Cloud services?",
@@ -142,7 +166,8 @@
       "correct": [0, 1, 2, 3],
       "type": "multi",
       "image": null,
-      "explanation": "Service accounts, user accounts, API keys, and OAuth 2.0 tokens are all valid authentication methods. Passwords are not used for GCP authentication."
+      "explanation": "Service accounts, user accounts, API keys, and OAuth 2.0 tokens are all valid authentication methods.",
+      "section": "security"
     },
     {
       "text": "What does the 'predefined role' Editor include?",
@@ -150,7 +175,8 @@
       "correct": [0],
       "type": "single",
       "image": null,
-      "explanation": "The Editor role (roles/editor) provides full read and write access to most GCP resources, including the ability to modify and delete resources."
+      "explanation": "The Editor role provides full read and write access to most GCP resources.",
+      "section": "security"
     },
     {
       "text": "Which network topology allows you to connect VPCs from different projects?",
@@ -158,7 +184,8 @@
       "correct": [0],
       "type": "single",
       "image": null,
-      "explanation": "VPC Peering allows you to connect VPC networks between different projects or organizations, enabling traffic between resources in different projects."
+      "explanation": "VPC Peering allows you to connect VPC networks between different projects or organizations.",
+      "section": "setup"
     }
   ]
 }
