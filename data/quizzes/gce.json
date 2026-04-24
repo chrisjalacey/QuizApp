@@ -187,5 +187,6 @@
       "explanation": "VPC Peering allows you to connect VPC networks between different projects or organizations.",
       "section": "setup"
     }
-  ]
+  ],
+  "name": "Google Associate Cloud Engineer"
 }

@@ -9,30 +9,27 @@ app = Flask(__name__)
 app.secret_key = 'quiz_app_secret_key'  # Change in production
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
-REGISTRY_FILE = os.path.join(DATA_DIR, 'quizzes_registry.json')
+QUIZ_FOLDER = os.path.join(DATA_DIR, 'quizzes')
 DB_FILE = os.path.join(DATA_DIR, 'scores.db')
 
-def load_quizzes_registry():
-    """Load the quizzes registry to get list of available quizzes."""
-    with open(REGISTRY_FILE, 'r') as f:
-        return json.load(f)
+
+def list_quiz_files():
+    """Return a list of quiz file paths in the quizzes folder."""
+    quiz_files = []
+    for fname in os.listdir(QUIZ_FOLDER):
+        if fname.endswith('.json'):
+            quiz_files.append(os.path.join(QUIZ_FOLDER, fname))
+    return quiz_files
 
 def load_quiz(quiz_id):
-    """Load a specific quiz by its ID from the registry and file."""
-    registry = load_quizzes_registry()
-    quiz_info = None
-    for q in registry['quizzes']:
-        if q['id'] == quiz_id:
-            quiz_info = q
-            break
-    
-    if not quiz_info:
-        return None
-    
-    quiz_file = os.path.join(os.path.dirname(__file__), quiz_info['file'])
-    with open(quiz_file, 'r') as f:
-        data = json.load(f)
-        return {'id': quiz_id, 'name': quiz_info['name'], 'data': data, 'sections': data.get('sections', [])}
+    """Load a specific quiz by its ID (filename without .json) from the quizzes folder."""
+    for path in list_quiz_files():
+        if os.path.splitext(os.path.basename(path))[0] == quiz_id:
+            with open(path, 'r') as f:
+                data = json.load(f)
+                name = data.get('name', quiz_id)
+                return {'id': quiz_id, 'name': name, 'data': data, 'sections': data.get('sections', [])}
+    return None
 
 def init_db():
     conn = sqlite3.connect(DB_FILE)
@@ -57,20 +54,18 @@ def serve_img(filename):
 
 @app.route('/')
 def home():
-    registry = load_quizzes_registry()
-    quizzes = registry['quizzes']
-    
-    # Load sections for each quiz
-    quizzes_with_sections = []
-    for q in quizzes:
-        quiz_data = load_quiz(q['id'])
-        quizzes_with_sections.append({
-            'id': q['id'],
-            'name': q['name'],
-            'sections': quiz_data.get('sections', [])
-        })
-    
-    return render_template('index.html', quizzes=quizzes_with_sections)
+    quiz_files = list_quiz_files()
+    quizzes = []
+    for path in quiz_files:
+        quiz_id = os.path.splitext(os.path.basename(path))[0]
+        with open(path, 'r') as f:
+            data = json.load(f)
+            quizzes.append({
+                'id': quiz_id,
+                'name': data.get('name', quiz_id),
+                'sections': data.get('sections', [])
+            })
+    return render_template('index.html', quizzes=quizzes)
 
 @app.route('/start_quiz', methods=['POST'])
 def start_quiz():
