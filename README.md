@@ -4,12 +4,13 @@ A web-based quiz application similar to VCE exam simulators.
 
 ## Features
 
-- JSON-based quiz data with categories
-- Select categories and number of questions
+- JSON-based quiz data with auto-discovery from `data/quizzes/` folder
+- Section-based filtering (select specific topics)
 - Single-choice and multi-choice questions
+- Explanations shown in review
 - Optional timer
 - Image support for questions
-- Historical score tracking
+- Historical score tracking with detailed review
 - Mobile-friendly responsive design
 
 ## Setup
@@ -25,24 +26,34 @@ Run: `docker run -p 5000:5000 quiz-app`
 
 ## Quiz Data
 
-Edit `data/quizzes.json` to add questions.
+Add `.json` files to `data/quizzes/` — they are auto-discovered on startup.
 
 Format:
 ```json
 {
-  "categories": [
+  "name": "Quiz Display Name",
+  "sections": [
+    {"id": "section1", "name": "Section Name", "description": "Brief description"}
+  ],
+  "questions": [
     {
-      "name": "Category",
-      "questions": [
-        {
-          "text": "Question?",
-          "options": ["A", "B", "C"],
-          "correct": [0],  // array for multi-choice
-          "type": "single",  // or "multi"
-          "image": "img/image.png"  // optional
-        }
-      ]
+      "text": "Question?",
+      "options": ["A", "B", "C"],
+      "correct": [0],
+      "type": "single",
+      "image": "img/image.png",
+      "explanation": "Why this answer is correct",
+      "section": "section1"
     }
   ]
 }
 ```
+
+## Documentation
+
+- [ARCHITECTURE.md](ARCHITECTURE.md) — System design and components
+- [API_ROUTES.md](API_ROUTES.md) — Route documentation
+- [JSON_SCHEMA.md](JSON_SCHEMA.md) — Quiz data format reference
+- [DEPLOYMENT.md](DEPLOYMENT.md) — Setup and deployment guide
+- [DEVELOPMENT.md](DEVELOPMENT.md) — Development guide
+- [QUICKREF.md](QUICKREF.md) — Quick reference card

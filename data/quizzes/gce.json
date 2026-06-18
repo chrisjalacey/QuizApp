@@ -188,5 +188,6 @@
       "section": "setup"
     }
   ],
-  "name": "Google Associate Cloud Engineer"
+  "name": "Google Associate Cloud Engineer",
+  "id": "gce"
 }

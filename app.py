@@ -37,11 +37,13 @@ def init_db():
     c.execute('''CREATE TABLE IF NOT EXISTS scores
                  (id INTEGER PRIMARY KEY, date TEXT, score INTEGER, total INTEGER, percentage REAL, categories TEXT, question_counts TEXT, timer_used INTEGER)''')
     
-    # Migration: Add answers column if it doesn't exist
+    # Migration: Add columns if they don't exist
     c.execute("PRAGMA table_info(scores)")
     columns = {column[1] for column in c.fetchall()}
     if 'answers' not in columns:
         c.execute('ALTER TABLE scores ADD COLUMN answers TEXT')
+    if 'questions' not in columns:
+        c.execute('ALTER TABLE scores ADD COLUMN questions TEXT')
     
     conn.commit()
     conn.close()
@@ -162,12 +164,13 @@ def submit_quiz():
     # Save to db
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute('INSERT INTO scores (date, score, total, percentage, categories, question_counts, timer_used, answers) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+    c.execute('INSERT INTO scores (date, score, total, percentage, categories, question_counts, timer_used, answers, questions) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
               (datetime.now().isoformat(), score, total, percentage, 
                json.dumps([session.get('quiz_name', 'Unknown')]), 
                json.dumps({'questions': total}), 
                int(session.get('timer', 0) or 0),
-               json.dumps(answers_list)))
+               json.dumps(answers_list),
+               json.dumps(questions)))
     conn.commit()
     conn.close()
     
@@ -219,58 +222,42 @@ def history_detail(attempt_id):
     """Display detailed review of a specific quiz attempt."""
     conn = sqlite3.connect(DB_FILE)
     c = conn.cursor()
-    c.execute('SELECT date, categories, score, total, percentage, answers FROM scores WHERE id = ?', (attempt_id,))
+    c.execute('SELECT date, categories, score, total, percentage, answers, questions FROM scores WHERE id = ?', (attempt_id,))
     row = c.fetchone()
     conn.close()
     
     if not row:
         return redirect(url_for('history'))
     
-    date, categories_json, score, total, percentage, answers_json = row
+    date, categories_json, score, total, percentage, answers_json, questions_json = row
     categories = json.loads(categories_json)
     quiz_name = categories[0] if categories else 'Unknown'
     answers_list = json.loads(answers_json) if answers_json else []
+    questions = json.loads(questions_json) if questions_json else []
     
-    # Reconstruct review data from answers
-    # Need to load the quiz file to get questions with explanations
     review_data = []
-    
-    # Try to find the quiz by name from registry
-    registry = load_quizzes_registry()
-    quiz_id = None
-    for q in registry['quizzes']:
-        if q['name'] == quiz_name:
-            quiz_id = q['id']
-            break
-    
-    if quiz_id:
-        quiz = load_quiz(quiz_id)
-        if quiz and 'questions' in quiz['data']:
-            questions = quiz['data']['questions']
-            # Map stored answers to questions
-            for i, user_ans in enumerate(answers_list):
-                if i < len(questions):
-                    q = questions[i]
-                    correct = q.get('correct', [])
-                    is_correct = set(user_ans) == set(correct)
-                    user_labels = [q['options'][idx] for idx in user_ans] if user_ans else []
-                    correct_labels = [q['options'][idx] for idx in correct]
-                    
-                    review_item = {
-                        'question_index': i,
-                        'question_text': q.get('text', ''),
-                        'question_type': q.get('type', 'single'),
-                        'options': q.get('options', []),
-                        'correct_indices': correct,
-                        'correct_labels': correct_labels,
-                        'correct_count': len(correct),
-                        'user_answers': user_ans,
-                        'user_labels': user_labels,
-                        'is_correct': is_correct,
-                        'image': q.get('image'),
-                        'explanation': q.get('explanation', '')
-                    }
-                    review_data.append(review_item)
+    for i, user_ans in enumerate(answers_list):
+        if i < len(questions):
+            q = questions[i]
+            correct = q.get('correct', [])
+            is_correct = set(user_ans) == set(correct)
+            user_labels = [q['options'][idx] for idx in user_ans] if user_ans else []
+            correct_labels = [q['options'][idx] for idx in correct]
+            
+            review_data.append({
+                'question_index': i,
+                'question_text': q.get('text', ''),
+                'question_type': q.get('type', 'single'),
+                'options': q.get('options', []),
+                'correct_indices': correct,
+                'correct_labels': correct_labels,
+                'correct_count': len(correct),
+                'user_answers': user_ans,
+                'user_labels': user_labels,
+                'is_correct': is_correct,
+                'image': q.get('image'),
+                'explanation': q.get('explanation', '')
+            })
     
     return render_template('history_detail.html', 
                          attempt_id=attempt_id,
