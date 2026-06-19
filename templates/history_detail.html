@@ -1,13 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attempt Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <div class="container mt-5">
+{% extends "base.html" %}
+{% block title %}Attempt Details{% endblock %}
+{% block content %}
         <h1 class="mb-4">Quiz Attempt Details</h1>
         
         <!-- Score Summary -->
@@ -72,8 +65,8 @@
             <a href="{{ url_for('history') }}" class="btn btn-secondary">Back to History</a>
             <a href="{{ url_for('home') }}" class="btn btn-primary">Home</a>
         </div>
-    </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
+{% block scripts %}
     <script>
         function toggleGroup(group, show) {
             document.querySelectorAll(`.accordion-item[data-result="${group}"]`).forEach(item => {
@@ -89,5 +82,4 @@
             });
         }
     </script>
-</body>
-</html>
+{% endblock %}
