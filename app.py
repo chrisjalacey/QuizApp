@@ -244,6 +244,24 @@ def history():
     
     return render_template('history.html', attempts=attempts)
 
+@app.route('/history/<int:attempt_id>/delete', methods=['POST'])
+def history_delete(attempt_id):
+    """Delete a specific quiz attempt."""
+    conn = sqlite3.connect(DB_FILE)
+    c = conn.cursor()
+    c.execute('DELETE FROM scores WHERE id = ?', (attempt_id,))
+    conn.commit()
+    conn.close()
+    # Clean up any session files (best effort)
+    for fname in os.listdir(SESSION_DIR):
+        if fname.endswith('.json'):
+            path = os.path.join(SESSION_DIR, fname)
+            try:
+                os.remove(path)
+            except OSError:
+                pass
+    return redirect(url_for('history'))
+
 @app.route('/history/<int:attempt_id>')
 def history_detail(attempt_id):
     """Display detailed review of a specific quiz attempt."""

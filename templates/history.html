@@ -24,6 +24,9 @@
                         <td>{{ "%.2f"|format(attempt.percentage) }}%</td>
                         <td>
                             <a href="{{ url_for('history_detail', attempt_id=attempt.id) }}" class="btn btn-sm btn-info">View Details</a>
+                            <form action="{{ url_for('history_delete', attempt_id=attempt.id) }}" method="post" class="d-inline" onsubmit="return confirm('Delete this attempt?')">
+                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                            </form>
                         </td>
                     </tr>
                     {% endfor %}
