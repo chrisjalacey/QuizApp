@@ -22,7 +22,26 @@ A web-based quiz application similar to VCE exam simulators.
 ## Docker
 
 Build: `docker build -t quiz-app .`
-Run: `docker run -p 5000:5000 quiz-app`
+Run: `docker run -p 5000:5000 -v $(pwd)/data/quizzes:/app/data/quizzes quiz-app`
+
+Mount the `data/quizzes/` folder as a volume so you can add or update quizzes without rebuilding the image.
+
+### Docker Compose
+
+```yaml
+version: '3.8'
+services:
+  quiz-app:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./data/quizzes:/app/data/quizzes
+```
+
+```bash
+docker-compose up -d
+```
 
 ## Quiz Data
 

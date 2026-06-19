@@ -3,10 +3,29 @@ import json
 import os
 import random
 import sqlite3
+import uuid
 from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'quiz_app_secret_key'  # Change in production
+
+SESSION_DIR = os.path.join(os.path.dirname(__file__), 'data', 'sessions')
+os.makedirs(SESSION_DIR, exist_ok=True)
+
+def save_quiz_session(data):
+    """Save large quiz data to a file, return session ID."""
+    sid = str(uuid.uuid4())
+    with open(os.path.join(SESSION_DIR, f'{sid}.json'), 'w') as f:
+        json.dump(data, f)
+    return sid
+
+def load_quiz_session(sid):
+    """Load quiz data from file by session ID."""
+    path = os.path.join(SESSION_DIR, f'{sid}.json')
+    if os.path.exists(path):
+        with open(path, 'r') as f:
+            return json.load(f)
+    return None
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), 'data')
 QUIZ_FOLDER = os.path.join(DATA_DIR, 'quizzes')
@@ -99,27 +118,32 @@ def start_quiz():
     selected_questions = random.sample(questions, num)
     random.shuffle(selected_questions)
     
-    session['questions'] = selected_questions
-    session['current'] = 0
-    session['answers'] = {}
+    # Store large data in file, keep small metadata in cookie session
+    sid = save_quiz_session({'questions': selected_questions})
+    session['quiz_session_id'] = sid
     session['quiz_id'] = quiz_id
     session['quiz_name'] = quiz['name']
     session['timer'] = request.form.get('timer', '')
     session['start_time'] = datetime.now().isoformat()
-    session['sections'] = sections  # Store selected sections
+    session['sections'] = sections
     
     return redirect(url_for('quiz'))
 
 @app.route('/quiz')
 def quiz():
-    questions = session.get('questions', [])
-    if not questions:
+    sid = session.get('quiz_session_id')
+    if not sid:
         return redirect(url_for('home'))
-    return render_template('quiz.html', questions=questions, timer=session.get('timer', ''))
+    data = load_quiz_session(sid)
+    if not data:
+        return redirect(url_for('home'))
+    return render_template('quiz.html', questions=data['questions'], timer=session.get('timer', ''))
 
 @app.route('/submit_quiz', methods=['POST'])
 def submit_quiz():
-    questions = session.get('questions', [])
+    sid = session.get('quiz_session_id')
+    data = load_quiz_session(sid) if sid else None
+    questions = data['questions'] if data else []
     answers = {}
     review_data = []
     score = 0
@@ -174,11 +198,12 @@ def submit_quiz():
     conn.commit()
     conn.close()
     
+    # Store review data in file session
+    review_sid = save_quiz_session({'review_data': review_data})
+    session['review_session_id'] = review_sid
     session['score'] = score
     session['total'] = total
     session['percentage'] = percentage
-    session['answers'] = answers
-    session['review_data'] = review_data
     session['quiz_name'] = session.get('quiz_name', 'Unknown')
     
     return redirect(url_for('results'))
@@ -188,8 +213,10 @@ def results():
     score = session.get('score', 0)
     total = session.get('total', 0)
     percentage = session.get('percentage', 0)
-    review_data = session.get('review_data', [])
     quiz_name = session.get('quiz_name', 'Unknown')
+    review_sid = session.get('review_session_id')
+    data = load_quiz_session(review_sid) if review_sid else None
+    review_data = data['review_data'] if data else []
     return render_template('results.html', score=score, total=total, percentage=percentage, review_data=review_data, quiz_name=quiz_name)
 
 @app.route('/history')

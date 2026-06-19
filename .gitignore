@@ -39,6 +39,12 @@ Thumbs.db
 data/scores.db
 *.db
 
+# Sessions
+data/sessions/
+
 # Environment
 .env
 .env.local
+
+# Temp
+.temp/
